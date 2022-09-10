@@ -1,0 +1,11 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dark-theme-text-color);
+
+  height: 100%;
+  overflow: auto;
+
+  background: var(--gpGradient-StoreBackground);
+}

@@ -1,0 +1,30 @@
+.Loading {
+  flex-grow: 1;
+  height: 100%;
+
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.Spinner {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .Spinner {
+    animation: Spinner-spin infinite 20s linear;
+  }
+}
+
+@keyframes Spinner-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
