@@ -1,0 +1,88 @@
+services:
+  context-broker:
+    container_name: context-broker
+    volumes:
+      - ./services/context-broker:/home/node/app
+    image: node:lts-alpine
+    working_dir: /home/node/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - 8000:8000
+    environment:
+      - CONTEXT_BROKER_PORT=8000
+      - DB_NAME=solar
+      - MONGO_HOST=mongo
+
+  record-engine:
+    container_name: record-engine
+    volumes:
+      - ./services/record-engine:/home/node/app
+    image: node:lts-alpine
+    working_dir: /home/node/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - 8001:8001
+    environment:
+      - RECORD_ENGINE_PORT=8001
+      - DB_NAME=solar
+      - MONGO_HOST=mongo
+      - REDIS_HOST=redis
+
+  mqtt-agent:
+    container_name: mqtt-agent
+    volumes:
+      - ./services/mqtt-agent:/home/node/app
+    image: node:lts-alpine
+    working_dir: /home/node/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - 8003:8003
+    environment:
+      - MQTT_AGENT_PORT=8003
+      - MQTT_BROKER_HOST=mqtt
+      - CONTEXT_BROKER_HOST=context-broker
+      - CONTEXT_BROKER_PORT=8000
+      - REDIS_HOST=redis
+
+  monitoring-backend:
+    container_name: monitoring-backend
+    volumes:
+      - ./services/monitoring-backend:/home/node/app
+    image: node:lts-alpine
+    working_dir: /home/node/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - 8002:8002
+    environment:
+      - SECRET=topsecret
+      - MONITORING_BACKEND_PORT=8002
+      - DB_NAME=solar
+      - MONGO_HOST=mongo
+      - REDIS_HOST=redis
+      - CONTEXT_BROKER_HOST=context-broker
+      - CONTEXT_BROKER_PORT=8000
+      - RECORD_ENGINE_HOST=record-engine
+      - RECORD_ENGINE_PORT=8001
+
+  mongo:
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+    image: mongo
+    ports:
+      - 27017:27017
+
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:1.6
+    ports:
+      - 1883:1883
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - 6379:6379
+
+volumes:
+  mongo-data:
